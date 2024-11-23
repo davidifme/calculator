@@ -1,15 +1,27 @@
-function calculatorAdd(a, b) {
-    return a + b;
-}
+function calculatorOperation(a, operator, b) {
+    const numberA = a;
+    const numberB = b;
+    const operatorAB = operator;
+    let result = 0;
 
-function calculatorSubtract(a, b) {
-    return a - b;
-}
+    switch (operatorAB) {
+        case '+':
+            result = numberA + numberB;
+            break;
+        case '-':
+            result = numberA - numberB;
+            break;
+        case '*':
+            result = numberA * numberB;
+            break;
+        case '/':
+            result = numberA * numberB;
+            break;   
 
-function calculatorMultiply(a, b) {
-    return a * b;
-}
+        default:
+            console.log('ERROR! Invalid operator.')
+            break;
+    }
 
-function calculatorDivide(a, b) {
-    return a / b;
+    return result;
 }

@@ -25,5 +25,3 @@ function calculatorOperation(a, operator, b) {
 
     return result;
 }
-
-console.log(calculatorOperation(5, '-', 3));

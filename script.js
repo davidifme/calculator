@@ -16,12 +16,12 @@ function divide(a, b) {
 
 function operate(a, operator, b) {
     let result = 0;
-    const numberA = Number(a);
-    const numberB = Number(b);
+    const numberA = a;
+    const numberB = b;
 
     switch(operator) {
         case '+':
-            result = add(numberA, numberB);
+            result = add(Number(numberA), Number(numberB));
             break;
         case '-':
             result = subtract(numberA, numberB);
@@ -44,60 +44,31 @@ const numericButtons = document.querySelectorAll('.number-button');
 const operationButtons = document.querySelectorAll('.operation-button');
 const display = document.querySelector('.calculator-display');
 
-let displayValue = '';
+let displayNumber = '0';
 let firstNumber = 0;
 let secondNumber = 0;
 let currentOperator = '';
-let currentResult = 0;
-let typeToggle = true;
-let numberSwitch = false;
 
-numericButtons.forEach((number) => {
-    number.addEventListener(("click"), () => {
-        const buttonValue = number.textContent;
-
-        if (display.textContent.length <= 12) {
-            if (typeToggle === false || display.textContent == 0 || display.textContent === '') {
-                display.textContent = buttonValue;
-                displayValue = buttonValue;
-                typeToggle = true;
-            } else {
-                display.textContent += buttonValue;
-                displayValue += buttonValue;
-            }
-        }
+numericButtons.forEach((button) => {
+    button.addEventListener(("click"), () => {
+        displayNumber += button;
+        display.textContent = displayNumber;
     });
 });
 
-operationButtons.forEach((operator) => {
-    operator.addEventListener(("click"), () => {
-        if (operator.textContent === 'C') {
-            display.textContent = 0;
-            displayValue = 0;
-            numberSwitch = false;
-        } else if (operator.textContent === '=') {
-            secondNumber = display.textContent;
-            currentResult = operate(firstNumber, currentOperator, secondNumber);
-            display.textContent = currentResult;
-            firstNumber = 0;
-            secondNumber = 0;
-            currentOperator = '';
-            typeToggle = false;
-            numberSwitch = false;
-        } else {
-            if (!numberSwitch) {
-                firstNumber = display.textContent;
-                currentOperator = operator.textContent;
-                numberSwitch = true;
-                typeToggle = false;
-            } else {
-                secondNumber = display.textContent;
-                currentResult = operate(firstNumber, currentOperator, secondNumber);
-                currentOperator = operator.textContent;
-                firstNumber = currentResult;
-                display.textContent = currentResult;
-                typeToggle = false;
-            }
+operationButtons.forEach((button) => {
+    button.addEventListener(("click"), () => {
+        switch(button) {
+            case 'C':
+                displayNumber = '0';
+                display.textContent = 0;
+                break;
+            case '=':
+                break;
+
+            default:
+                firstNumber = displayNumber;
+                break;
         }
     });
 });

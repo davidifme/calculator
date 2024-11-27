@@ -1,124 +1,142 @@
-const numericButtons = document.querySelectorAll('.number-button');
-const operationButtons = document.querySelectorAll('.operation-button');
-const display = document.querySelector('.calculator-display');
+(function() {
+    const numericButtons = document.querySelectorAll('.number-button');
+    const operationButtons = document.querySelectorAll('.operation-button');
+    const decimalButton = document.querySelector('.decimal-button');
+    const backspaceButton = document.querySelector('.backspace-button');
+    const display = document.querySelector('.calculator-display');
 
-let displayValue = '';
-let firstNumber = 0;
-let secondNumber = 0;
-let currentOperator = '';
-let result = 0;
+    let displayValue = '';
+    let firstOperand = null;
+    let currentOperator = null;
+    let typeToggle = false;
+    let numberSwitch = false;
 
-let numberSwitch = false;
-let typeToggle = false;
-
-numericButtons.forEach(button => {
-    button.addEventListener(("click"), () => {
-        if (!typeToggle) {
-            displayValue += button.textContent;
-            setDisplayValue(displayValue);
-        } else {
-            displayValue = button.textContent;
-            setDisplayValue(displayValue);
-            typeToggle = false;
-        }
+    numericButtons.forEach(button => {
+        button.addEventListener("click", () => handleNumberClick(button.textContent));
     });
-});
 
-operationButtons.forEach(button => {
-    button.addEventListener(("click"), () => {
-        switch(button.textContent) {
+    operationButtons.forEach(button => {
+        button.addEventListener("click", () => handleOperationClick(button.textContent));
+    });
+
+    if (decimalButton) {
+        decimalButton.addEventListener("click", () => handleDecimalClick());
+    }
+
+    if (backspaceButton) {
+        backspaceButton.addEventListener("click", () => handleBackspace());
+    }
+
+    document.addEventListener("keydown", handleKeyboardInput);
+
+    function handleNumberClick(value) {
+        if (typeToggle) {
+            displayValue = value;
+            typeToggle = false;
+        } else {
+            displayValue += value;
+        }
+        updateDisplay(displayValue);
+        updateDecimalButton();
+    }
+
+    function handleOperationClick(operator) {
+        switch (operator) {
             case 'C':
-                setDisplayValue('');
+                resetCalculator();
                 break;
             case '=':
-                setDisplayValue(getResult());
-                typeToggle = true;
-                numberSwitch = false;
+                if (currentOperator && firstOperand !== null) {
+                    calculateResult();
+                }
                 break;
             case '.':
-                addToDisplayValue('.');
+                handleDecimalClick();
                 break;
             default:
                 if (!numberSwitch) {
-                    firstNumber = getDisplayValue();
-                    setDisplayValue('');
-                    currentOperator = button.textContent;
+                    firstOperand = parseFloat(displayValue) || 0;
+                    currentOperator = operator;
                     numberSwitch = true;
                     typeToggle = true;
                 } else {
-                    setDisplayValue(getResult());
+                    calculateResult();
+                    currentOperator = operator;
                 }
                 break;
         }
-    }); 
-});
-
-function getResult() {
-    secondNumber = getDisplayValue();
-    result = operate(firstNumber, currentOperator, secondNumber);
-    firstNumber = result;
-    typeToggle = true;
-    return result;
-}
-
-function addToDisplayValue(value) {
-    display.textContent += value;
-    displayValue += value;
-}
-
-function setDisplayValue(value) {
-    display.textContent = value;
-    displayValue = value;
-}
-
-function getDisplayValue() {
-    return displayValue;
-}
-
-function add(a, b) {
-    return a + b;
-}
-
-function subtract(a, b) {
-    return a - b;
-}
-
-function multiply(a, b) {
-    return a * b;
-}
-
-function divide(a, b) {
-    return a / b;
-}
-
-function operate(a, operator, b) {
-    let result = 0;
-    const numberA = a;
-    const numberB = b;
-
-    switch(operator) {
-        case '+':
-            result = add(Number(numberA), Number(numberB));
-            break;
-        case '-':
-            result = subtract(numberA, numberB);
-            break;
-        case '*':
-            result = multiply(numberA, numberB);
-            break;
-        case '/':
-            if (numberA === 0 || numberB === 0) {
-                display.textContent = "ERROR";
-                typeToggle = true;
-            } else {
-                result = divide(numberA, numberB);
-            }
-            break;
-        default:
-            console.log('Invalid operator.')
-            break;
     }
 
-    return parseFloat(result.toFixed(12));
-}
+    function handleDecimalClick() {
+        if (!displayValue.includes('.')) {
+            handleNumberClick('.');
+        }
+        updateDecimalButton();
+    }
 
+    function handleBackspace() {
+        if (displayValue.length > 0) {
+            displayValue = displayValue.slice(0, -1);
+            updateDisplay(displayValue || '0');
+        }
+        updateDecimalButton();
+    }
+
+    function handleKeyboardInput(event) {
+        const key = event.key;
+
+        if (/\d/.test(key)) {
+            handleNumberClick(key);
+        } else if (key === '.') {
+            handleDecimalClick();
+        } else if (key === 'Backspace') {
+            handleBackspace();
+        } else if (['+', '-', '*', '/'].includes(key)) {
+            handleOperationClick(key);
+        } else if (key === 'Enter' || key === '=') {
+            handleOperationClick('=');
+        } else if (key === 'Escape') {
+            resetCalculator();
+        }
+    }
+
+    function calculateResult() {
+        const secondOperand = parseFloat(displayValue) || 0;
+        const result = operate(firstOperand, currentOperator, secondOperand);
+        firstOperand = result;
+        updateDisplay(result);
+        typeToggle = true;
+        numberSwitch = false;
+    }
+
+    function resetCalculator() {
+        displayValue = '';
+        firstOperand = null;
+        currentOperator = null;
+        typeToggle = false;
+        numberSwitch = false;
+        updateDisplay('0');
+        updateDecimalButton();
+    }
+
+    function updateDisplay(value) {
+        display.textContent = value;
+        displayValue = value.toString();
+    }
+
+    function updateDecimalButton() {
+        if (decimalButton) {
+            decimalButton.disabled = displayValue.includes('.');
+        }
+    }
+
+    function operate(a, operator, b) {
+        switch (operator) {
+            case '+': return a + b;
+            case '-': return a - b;
+            case '*': return a * b;
+            case '/': return b !== 0 ? a / b : 'ERROR';
+            default: return 0;
+        }
+    }
+})();

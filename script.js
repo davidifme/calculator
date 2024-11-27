@@ -1,3 +1,12 @@
+const numericButtons = document.querySelectorAll('.number-button');
+const operationButtons = document.querySelectorAll('.operation-button');
+const display = document.querySelector('.calculator-display');
+
+let displayNumber = '0';
+let firstNumber = 0;
+let secondNumber = 0;
+let currentOperator = '';
+
 function add(a, b) {
     return a + b;
 }
@@ -40,35 +49,3 @@ function operate(a, operator, b) {
     return parseFloat(result.toFixed(11));
 }
 
-const numericButtons = document.querySelectorAll('.number-button');
-const operationButtons = document.querySelectorAll('.operation-button');
-const display = document.querySelector('.calculator-display');
-
-let displayNumber = '0';
-let firstNumber = 0;
-let secondNumber = 0;
-let currentOperator = '';
-
-numericButtons.forEach((button) => {
-    button.addEventListener(("click"), () => {
-        displayNumber += button;
-        display.textContent = displayNumber;
-    });
-});
-
-operationButtons.forEach((button) => {
-    button.addEventListener(("click"), () => {
-        switch(button) {
-            case 'C':
-                displayNumber = '0';
-                display.textContent = 0;
-                break;
-            case '=':
-                break;
-
-            default:
-                firstNumber = displayNumber;
-                break;
-        }
-    });
-});

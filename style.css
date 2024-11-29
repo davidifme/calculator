@@ -23,7 +23,7 @@ button {
     padding: 30px;
 }
 
-.calculator-display {
+.calculator-current-display {
     display: flex;
     justify-content: right;
     align-items: center;

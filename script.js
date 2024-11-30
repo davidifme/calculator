@@ -6,13 +6,12 @@ let shouldClearDisplay = false;
 const numericButtons = document.querySelectorAll('.number-button');
 const operationButtons = document.querySelectorAll('.operation-button');
 
-const backspaceButton = document.querySelector('.backspace-button');
 const display = document.querySelector('.calculator-current-display');
 const clearButton = document.querySelector('#clear-button');
 const equalsButton = document.querySelector('#equals-button');
 const pointButton = document.querySelector('#point-button');
 
-clearButton.addEventListener(("click"), clearDisplay);
+clearButton.addEventListener(("click"), resetCalculator);
 equalsButton.addEventListener(("click"), evaluate);
 pointButton.addEventListener(("click"), addPoint);
 
@@ -25,7 +24,7 @@ operationButtons.forEach(operatorButton => {
 });
 
 function appendNumber(number) {
-    if (display.textContent == '0' || shouldClearDisplay)
+    if (display.textContent === '0' || shouldClearDisplay)
         clearDisplay();
     display.textContent += number;
 };
@@ -59,7 +58,7 @@ function setOperation(operator) {
 
 function evaluate() {
     if (currentOperator === null || shouldClearDisplay) return
-    if (currentOperation === '/' && currentOperationScreen.textContent === '0') {
+    if (currentOperator === '/' && display.textContent === '0') {
         alert("ERROR! Can't divide by 0.")
         return
       }

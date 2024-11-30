@@ -14,6 +14,10 @@ button {
     font-size: xx-large;
 }
 
+#delete-button {
+    width: auto;
+}
+
 .calculator-container {
     display: flex;
     flex-direction: column;

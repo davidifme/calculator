@@ -6,6 +6,7 @@ let shouldClearDisplay = false;
 const numericButtons = document.querySelectorAll('.number-button');
 const operationButtons = document.querySelectorAll('.operation-button');
 
+const deleteButton = document.querySelector('#delete-button');
 const display = document.querySelector('.calculator-current-display');
 const clearButton = document.querySelector('#clear-button');
 const equalsButton = document.querySelector('#equals-button');
@@ -14,6 +15,8 @@ const pointButton = document.querySelector('#point-button');
 clearButton.addEventListener(("click"), resetCalculator);
 equalsButton.addEventListener(("click"), evaluate);
 pointButton.addEventListener(("click"), addPoint);
+deleteButton.addEventListener('click', deleteNumber)
+window.addEventListener('keydown', handleKeyboardInput);
 
 numericButtons.forEach(numericButton => {
     numericButton.addEventListener('click', () => appendNumber(numericButton.textContent));
@@ -28,6 +31,12 @@ function appendNumber(number) {
         clearDisplay();
     display.textContent += number;
 };
+
+function deleteNumber() {
+    display.textContent = display.textContent
+      .toString()
+      .slice(0, -1)
+  }
 
 function clearDisplay() {
     display.textContent = '';
@@ -69,6 +78,16 @@ function evaluate() {
     );
     currentOperator = null;
 }
+
+function handleKeyboardInput(e) {
+    if (e.key >= 0 && e.key <= 9) appendNumber(e.key)
+    if (e.key === '.') addPoint()
+    if (e.key === '=' || e.key === 'Enter') evaluate()
+    if (e.key === 'Backspace') deleteNumber()
+    if (e.key === 'Escape' || e.key === 'c' || e.key === 'C') resetCalculator()
+    if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/')
+      setOperation(e.key)
+  }
 
 // Round a number to 12 decimal places
 function roundNumber(number) {
